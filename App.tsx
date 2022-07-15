@@ -1,10 +1,10 @@
-import {runTiming, useValue, Easing, useFont} from '@shopify/react-native-skia';
+import {Easing, runTiming, useFont, useValue} from '@shopify/react-native-skia';
 import React from 'react';
-import {Button, PixelRatio, StyleSheet, View} from 'react-native';
+import {PixelRatio, Pressable, StyleSheet, Text, View} from 'react-native';
 import {DonutChart} from './DonutChart';
 
 const radius = PixelRatio.roundToNearestPixel(130);
-const STROKE_WIDTH = 10;
+const STROKE_WIDTH = 12;
 
 const App = () => {
   const targetPercentage = 85 / 100;
@@ -18,9 +18,10 @@ const App = () => {
     });
   };
 
-  const font = useFont(require('./Roboto-Light.ttf'), 16);
+  const font = useFont(require('./Roboto-Light.ttf'), 60);
+  const smallerFont = useFont(require('./Roboto-Light.ttf'), 25);
 
-  if (!font) {
+  if (!font || !smallerFont) {
     return <View />;
   }
 
@@ -32,10 +33,14 @@ const App = () => {
           radius={radius}
           strokeWidth={STROKE_WIDTH}
           percentageComplete={animationState}
+          targetPercentage={targetPercentage}
           font={font}
+          smallerFont={smallerFont}
         />
       </View>
-      <Button title="Animate" onPress={animateChart} />
+      <Pressable onPress={animateChart} style={styles.button}>
+        <Text style={styles.buttonText}>Animate !</Text>
+      </Pressable>
     </View>
   );
 };
@@ -49,6 +54,17 @@ const styles = StyleSheet.create({
   ringChartContainer: {
     width: radius * 2,
     height: radius * 2,
+  },
+  button: {
+    marginTop: 40,
+    backgroundColor: 'orange',
+    paddingHorizontal: 60,
+    paddingVertical: 15,
+    borderRadius: 10,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 20,
   },
 });
 

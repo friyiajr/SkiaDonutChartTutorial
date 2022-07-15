@@ -1,20 +1,14 @@
-import React, {FC, useTransition} from 'react';
+import React, {FC} from 'react';
 
 import {
   Canvas,
-  Circle,
-  DiscretePathEffect,
-  Paint,
   Path,
-  runTiming,
+  SkFont,
   Skia,
   SkiaMutableValue,
-  useValue,
   Text,
-  useFont,
-  SkFont,
 } from '@shopify/react-native-skia';
-import {View, StyleSheet, Easing, Button} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 
 interface CircularProgressProps {
   strokeWidth: number;
@@ -22,6 +16,8 @@ interface CircularProgressProps {
   backgroundColor: string;
   percentageComplete: SkiaMutableValue<number>;
   font: SkFont;
+  smallerFont: SkFont;
+  targetPercentage: number;
 }
 
 export const DonutChart: FC<CircularProgressProps> = ({
@@ -29,17 +25,24 @@ export const DonutChart: FC<CircularProgressProps> = ({
   radius,
   percentageComplete,
   font,
+  targetPercentage,
+  smallerFont,
 }) => {
   const innerRadius = radius - strokeWidth / 2;
+  const targetText = `${targetPercentage * 100}`;
+
   const path = Skia.Path.Make();
   path.addCircle(radius, radius, innerRadius);
+
+  const width = font.getTextWidth(targetText);
+  const titleWidth = smallerFont.getTextWidth('Power');
 
   return (
     <View style={styles.container}>
       <Canvas style={styles.container}>
         <Path
           path={path}
-          color="lightblue"
+          color="orange"
           style="stroke"
           strokeJoin="round"
           strokeWidth={strokeWidth}
@@ -48,11 +51,20 @@ export const DonutChart: FC<CircularProgressProps> = ({
           end={percentageComplete}
         />
         <Text
-          x={innerRadius - strokeWidth * 4}
+          x={innerRadius - width / 2}
           y={radius + strokeWidth}
-          text={'H'}
+          text={targetText}
           font={font}
           size={32}
+          opacity={percentageComplete}
+        />
+        <Text
+          x={innerRadius - titleWidth / 2}
+          y={radius + 45}
+          text={'Power'}
+          font={smallerFont}
+          size={32}
+          opacity={percentageComplete}
         />
       </Canvas>
     </View>
